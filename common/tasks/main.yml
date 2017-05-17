@@ -1,0 +1,69 @@
+---
+# tasks file for common
+- name: Create Ceph User
+  become: yes
+  user:
+    name: cephuser
+    shell: /bin/bash
+
+- name: Create Sudoers configuration
+  become: yes
+  lineinfile:
+    create: yes
+    dest: /etc/sudoers.d/cephuser
+    line: "cephuser ALL = (root) NOPASSWD:ALL"
+    state: present
+
+- become: yes
+  file:
+    path: /etc/sudoers.d/cephuser
+    mode: 0440
+
+- become: yes
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: '^Defaults requiretty$'
+    line: '#Defaults requiretty' 
+
+- name: Install and configure ntp
+  become: yes
+  yum: name={{ item }} state=installed
+  with_items:
+    - ntp
+    - ntpdate
+    - ntp-doc
+
+- become: yes
+  shell: ntpdate 0.us.pool.ntp.org
+  ignore_errors: yes
+
+- become: yes
+  shell: hwclock --systohc
+
+- become: yes
+  systemd:
+    name: ntpd.service
+    enabled: yes
+    state: started
+
+- become: yes
+  selinux:
+    state: disabled
+
+
+- name: Setting Hostname
+  become: yes
+  lineinfile:
+    dest: /etc/cloud/cloud.cfg
+    line: 'preserve_hostname: true'
+    state: present
+
+- become: yes
+  hostname: name={{hostvars[inventory_hostname]["inventory_hostname"]}}
+
+- name: Set authorized key
+  become: yes
+  authorized_key:
+    user: cephuser
+    state: present
+    key: "{{ lookup('file', '/home/rodrigo/Development/innuy/ceph-cluster/common/files/id_rsa.pub') }}"

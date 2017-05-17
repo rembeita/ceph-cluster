@@ -1,0 +1,24 @@
+# Hosts
+deploy ansible_host=34.202.132.72 ansible_ssh_user=centos ansible_ssh_private_key_file=/home/rodrigo/Development/innuy/aws/boomer/test/DockerCluster.pem
+mon1 ansible_host=34.198.103.191 ansible_ssh_user=centos ansible_ssh_private_key_file=/home/rodrigo/Development/innuy/aws/boomer/test/DockerCluster.pem
+osd1 ansible_host=34.224.48.74 ansible_ssh_user=centos ansible_ssh_private_key_file=/home/rodrigo/Development/innuy/aws/boomer/test/DockerCluster.pem
+osd2 ansible_host=34.199.46.49 ansible_ssh_user=centos ansible_ssh_private_key_file=/home/rodrigo/Development/innuy/aws/boomer/test/DockerCluster.pem
+osd3 ansible_host=34.202.252.68 ansible_ssh_user=centos ansible_ssh_private_key_file=/home/rodrigo/Development/innuy/aws/boomer/test/DockerCluster.pem
+
+# List your node(s): swarm manager
+[ceph-osd]
+mon1
+
+# List your node(s): swarm node
+[ceph-mon]
+osd1
+osd2
+osd3
+
+[ceph-deploy]
+deploy
+
+[ceph-cluster:children]
+ceph-osd
+ceph-mon
+ceph-deploy

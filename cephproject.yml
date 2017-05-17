@@ -1,0 +1,19 @@
+---
+
+- name: Basic configuration in all nodes
+  hosts: ceph-cluster
+  roles:
+    - common
+
+- name: Basic configuration in all nodes
+  hosts: ceph-deploy
+  roles:
+    - sshkey
+
+#- name: Basic installation to all the nodes
+#  hosts:
+#  - swarm-nodes
+#  roles:
+#    - common
+#    - docker
+

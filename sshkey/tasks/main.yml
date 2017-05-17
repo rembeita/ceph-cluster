@@ -1,0 +1,13 @@
+---
+# tasks file for sshkey
+- name: Copy SSH Key
+  become: yes
+  copy:
+    src: "{{ item }}"
+    dest: /home/cephuser/.ssh/
+    owner: cephuser
+    group: cephuser
+    mode: 0600
+  with_items:
+    - id_rsa
+    - id_rsa.pub
